@@ -129,7 +129,15 @@ def scrap():
         cars_dict["Year"] = int(title_split[0])
         cars_dict["Make"] = title_split[1]
         cars_dict["Model"] = title_split[2] if len(title_split) > 2 else title_split[1]
-        cars_dict["Price"] = int(re.sub(r'[^\d.]', '', prices_list[i]))
+
+        # Try to parse price string, if fails use default val '0'.
+        price = '0' 
+        try:
+            price_digits = re.sub(r'[^\d.]', '', prices_list[i])
+            price = int(price_digits)
+        except ValueError: pass  # Do nothing
+        cars_dict["Price"] = price
+
         cars_dict["Mileage"] = mileage_clean[i]
         cars_dict["URL"] = urls_list[i]
         vehicles_list.append(cars_dict)
