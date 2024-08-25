@@ -3,7 +3,6 @@ from splinter import Browser
 from bs4 import BeautifulSoup as soup
 import re
 import pandas as pd
-import matplotlib.pyplot as plt
 import time
 
 
