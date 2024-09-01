@@ -30,6 +30,7 @@ def scrap():
     print("Checking at URL ")
     print(url)
     # Visit the website
+    
     browser.visit(url)
     if browser.is_element_present_by_css('div[aria-label="Close"]', wait_time=5):
         # Click on the element once it's found
