@@ -1,9 +1,9 @@
-
 from splinter import Browser
 from bs4 import BeautifulSoup as soup
 import re
 import pandas as pd
 import time
+import urllib
 
 
 def scrap():
@@ -15,17 +15,15 @@ def scrap():
     # Set up search parameters
     min_price = 40000
     max_price = 100000
-    days_listed = 30
-    min_mileage = 0
-    max_mileage = 2000000
     min_year = 2005
     max_year = 2010
     transmission = "manual"
     make = "ford"
-    model = " ranger"
+    model = "ranger"
+    searchQuery =  urllib.parse.quote(f'{make} {model}')
     # Set up full url
     #url = f"{base_url}minPrice={min_price}&maxPrice={max_price}&daysSinceListed={days_listed}&maxMileage={max_mileage}&maxYear={max_year}&minMileage={min_mileage}&minYear={min_year}&transmissionType={transmission}&query={make}{model}&exact=false"
-    url = f"{base_url}minPrice={min_price}&maxPrice={max_price}&maxMileage={max_mileage}&maxYear={max_year}&minMileage={min_mileage}&minYear={min_year}&transmissionType={transmission}&query={make}{model}&exact=false"
+    url = f"{base_url}minPrice={min_price}&maxPrice={max_price}&maxYear={max_year}&minYear={min_year}&transmissionType={transmission}&query={searchQuery}&exact=false"
 
     print("Checking at URL ")
     print(url)
@@ -125,11 +123,16 @@ def scrap():
     for i, item in enumerate(titles_list):
         cars_dict = {}
 
+        if make.lower() not in titles_list[i].lower() and model.lower() not in titles_list[i].lower():
+            print(f'droping result "{item}" https://www.facebook.com/{urls_list[i]}.')
+            continue
+
         title_split = titles_list[i].split()
 
         cars_dict["Year"] = int(title_split[0])
         cars_dict["Make"] = title_split[1]
         cars_dict["Model"] = title_split[2] if len(title_split) > 2 else title_split[1]
+
 
         # Try to parse price string, if fails use default val '0'.
         price = '0' 
@@ -145,6 +148,7 @@ def scrap():
 
     #print(vehicles_list)
 
+    print(f'Final vehicles count: {len(vehicles_list)}')
     vehicles_df = pd.DataFrame(vehicles_list)
 
     # add prefix to the URL's
